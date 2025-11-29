@@ -1,0 +1,8 @@
+[package]
+name = "animusd-lib"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bincode = { version = "2.0.1", default-features = false, features = ["std", "alloc", "derive"] }
+thiserror = "2.0.17"
