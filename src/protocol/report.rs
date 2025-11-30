@@ -22,9 +22,8 @@ pub struct Report {
 
 impl Report {
 
-    // Serialize a Response to bytes.
-    #[allow(dead_code)]
-    pub(crate) fn encode(&self) -> Result<Vec<u8>, EncodeError> {
+    /// Serialize a Response to bytes.
+    pub fn encode(&self) -> Result<Vec<u8>, EncodeError> {
 
         let config = bincode::config::standard()
             .with_big_endian()

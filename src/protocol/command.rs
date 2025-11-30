@@ -36,9 +36,8 @@ impl Command {
         }
     }
 
-    // Deserialize a command message from bytes.
-    #[allow(dead_code)]
-    pub(crate) fn decode(input: &[u8]) -> Result<Self, DecodeError> {
+    /// Deserialize a command message from bytes.
+    pub fn decode(input: &[u8]) -> Result<Self, DecodeError> {
 
         let config = bincode::config::standard()
             .with_big_endian()
