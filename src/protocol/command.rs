@@ -2,7 +2,7 @@
 use crate::error::{ EncodeError, DecodeError };
 
 
-/// Command package for TCP communication.
+/// Command package for animus communication.
 /// Use this struct and methods within your application 
 /// to generate accurate command messages.
 #[derive(Debug, Clone, Eq, PartialEq)]

@@ -3,7 +3,7 @@ use super::Action;
 use crate::error::{ EncodeError, DecodeError };
 
 
-/// Response package for TCP communication.
+/// Response package for animus communication.
 /// Use this struct and methods within your application 
 /// to accurately parse response messages.
 #[derive(Debug, Clone, Eq, PartialEq)]

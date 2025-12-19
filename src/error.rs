@@ -4,7 +4,7 @@ pub use bincode::error::{ EncodeError, DecodeError };
 /// Error that occurs while processing commands.
 /// These should be handled within the program loop.
 #[derive(Debug, thiserror::Error)]
-pub enum CommandError {
+pub enum ProtocolError {
 
     #[error("IO operation failed: {0}")]
     Io(#[from] std::io::Error),
