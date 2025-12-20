@@ -1,7 +1,6 @@
 
 use crate::error::{ EncodeError, DecodeError };
 
-
 /// Command package for animus communication.
 /// Use this struct and methods within your application 
 /// to generate accurate command messages.
@@ -103,3 +102,22 @@ pub enum Action {
     Ignore,
 }
 
+use std::fmt;
+
+impl fmt::Display for Action {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> { 
+        let as_str = match self {
+            Self::Query => "Query",
+            Self::Name => "Name",
+            Self::Version => "Version",
+            Self::Status => "Status",
+            Self::ListStructures => "ListStructures",
+            Self::Wake => "Wake",
+            Self::Save => "Save",
+            Self::Sleep => "Sleep",
+            Self::Terminate => "Terminate",
+            Self::Ignore => "Ignore",
+        };
+        write!(f, "{}", as_str)
+    }
+}
