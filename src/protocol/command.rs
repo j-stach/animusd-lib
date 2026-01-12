@@ -82,8 +82,14 @@ pub enum Action {
     /// Returns "Success" if animus is awake, and "Fail" if asleep.
     Status,
 
-    /// List each `Structure` in the network.
+    /// Returns a list each `Structure` in the network.
     ListStructures,
+
+    /// Returns a list of the tract names of each Output.
+    ListOutputs,
+
+    /// Returns a list of `cajal_cx::ReceiverReport` of each Input.
+    ReportReceivers,
 
     /// Begin processing signals.
     Wake,
@@ -112,6 +118,8 @@ impl fmt::Display for Action {
             Self::Version => "Version",
             Self::Status => "Status",
             Self::ListStructures => "ListStructures",
+            Self::ListOutputs => "ListOutputs",
+            Self::ReportReceivers => "ReportReceivers",
             Self::Wake => "Wake",
             Self::Save => "Save",
             Self::Sleep => "Sleep",
