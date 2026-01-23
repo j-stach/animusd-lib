@@ -1,11 +1,12 @@
 
-use crate::error::{ EncodeError, DecodeError };
+use serde::{ Serialize, Deserialize };
+use crate::error::ProtocolError;
 
 /// Command package for animus communication.
 /// Use this struct and methods within your application 
 /// to generate accurate command messages.
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[derive(bincode::Encode, bincode::Decode)]
+#[derive(Serialize, Deserialize)]
 pub struct Command {
 
     /// The name of the animus this command targets.
@@ -36,37 +37,23 @@ impl Command {
     }
 
     /// Deserialize a command message from bytes.
-    pub fn decode(input: &[u8]) -> Result<Self, DecodeError> {
+    pub fn decode(input: &[u8]) -> Result<Self, ProtocolError> {
 
-        let config = bincode::config::standard()
-            .with_big_endian()
-            .with_fixed_int_encoding();
-
-        let (cmd, _): (Self, usize) = 
-            bincode::decode_from_slice(input, config)
-                .unwrap();
-
-        Ok(cmd)
+        bincode::deserialize::<Self>(&input).map_err(|_| ProtocolError::Encode)
     }
 
     /// Serialize a Command to bytes.
-    pub fn encode(&self) -> Result<Vec<u8>, EncodeError> {
+    pub fn encode(&self) -> Result<Vec<u8>, ProtocolError> {
 
-        let config = bincode::config::standard()
-            .with_big_endian()
-            .with_fixed_int_encoding();
-
-        let bytes = bincode::encode_to_vec(self, config).unwrap();
-
-        Ok(bytes)
+        bincode::serialize(&self).map_err(|_| ProtocolError::Decode)
     }
 
 }
 
 /// Commands for controlling service behavior.
 /// Parallel to `AnimusCommand` from Brainstorm.
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-#[derive(bincode::Encode, bincode::Decode)]
+#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub enum Action {
 
     /// Gets the name of the animus.
@@ -88,8 +75,11 @@ pub enum Action {
     /// Returns a list of the tract names of each Output.
     ListOutputs,
 
+    /// Returns a list of the tract names of each Input.
+    ListInputs,
+
     /// Returns a list of `cajal_cx::ReceiverReport` of each Input.
-    ReportReceivers,
+    ReportInputs,
 
     /// Begin processing signals.
     Wake,
@@ -106,6 +96,10 @@ pub enum Action {
     /// The animus will do nothing.
     /// This is used to ignore non-command UDP messages.
     Ignore,
+
+    /// Connect the appropriate Output to the Input in the report.
+    /// Passes the `ReceiverReport` as bytes.
+    ConnectTract(cajal_cx::tract::receiver::ReceiverReport),
 }
 
 use std::fmt;
@@ -119,12 +113,14 @@ impl fmt::Display for Action {
             Self::Status => "Status",
             Self::ListStructures => "ListStructures",
             Self::ListOutputs => "ListOutputs",
-            Self::ReportReceivers => "ReportReceivers",
+            Self::ListInputs => "ListInputs",
+            Self::ReportInputs => "ReportReceivers",
             Self::Wake => "Wake",
             Self::Save => "Save",
             Self::Sleep => "Sleep",
             Self::Terminate => "Terminate",
             Self::Ignore => "Ignore",
+            Self::ConnectTract(..) => "ConnectTract",
         };
         write!(f, "{}", as_str)
     }

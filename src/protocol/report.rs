@@ -1,13 +1,15 @@
 
+use serde::{ Serialize, Deserialize };
+use crate::error::ProtocolError;
+
 use super::Action;
-use crate::error::{ EncodeError, DecodeError };
 
 
 /// Response package for animus communication.
 /// Use this struct and methods within your application 
 /// to accurately parse response messages.
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[derive(bincode::Encode, bincode::Decode)]
+#[derive(Serialize, Deserialize)]
 pub struct Report {
 
     /// The name of the animus sending the response.
@@ -23,32 +25,21 @@ pub struct Report {
 impl Report {
 
     /// Serialize a Response to bytes.
-    pub fn encode(&self) -> Result<Vec<u8>, EncodeError> {
+    pub fn encode(&self) -> Result<Vec<u8>, ProtocolError> {
 
-        let config = bincode::config::standard()
-            .with_big_endian()
-            .with_fixed_int_encoding();
-
-        bincode::encode_to_vec(self, config)
+        bincode::serialize(&self).map_err(|_| ProtocolError::Decode)
     }
 
     /// Deserialize a Response message from bytes.
-    pub fn decode(input: &[u8]) -> Result<Self, DecodeError> {
+    pub fn decode(input: &[u8]) -> Result<Self, ProtocolError> {
 
-        let config = bincode::config::standard()
-            .with_big_endian()
-            .with_fixed_int_encoding();
-
-        let (rsp, _): (Self, usize) = 
-            bincode::decode_from_slice(input, config)?;
-
-        Ok(rsp)
+        bincode::deserialize::<Self>(&input).map_err(|_| ProtocolError::Encode)
     }
 }
 
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[derive(bincode::Encode, bincode::Decode)]
+#[derive(Serialize, Deserialize)]
 pub enum Outcome {
 
     /// The action was succesfully executed.
@@ -58,8 +49,8 @@ pub enum Outcome {
     /// See `/docs/troubleshooting.md`.
     Fail,
 
-    /// Some commands request information from the Animus.
-    Return(String)
+    /// Some commands request serialized information from the Animus.
+    Return(Vec<u8>)
 }
 
 use std::fmt;
@@ -69,7 +60,7 @@ impl fmt::Display for Outcome {
         let as_str = match self {
             Self::Success => "Success",
             Self::Fail => "Fail",
-            Self::Return(msg) => msg,
+            Self::Return(..) => "Return",
         };
         write!(f, "{}", as_str)
     }
