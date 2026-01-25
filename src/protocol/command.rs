@@ -99,7 +99,7 @@ pub enum Action {
 
     /// Connect the appropriate Output to the Input in the report.
     /// Passes the `ReceiverReport` as bytes.
-    ConnectTract(cajal_cx::tract::receiver::ReceiverReport),
+    ConnectTract(cajal_cx::tract::receiver::ReceiverInfo),
 }
 
 use std::fmt;
