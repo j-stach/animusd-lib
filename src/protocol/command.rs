@@ -78,8 +78,11 @@ pub enum Action {
     /// Returns a list of the tract names of each Input.
     ListInputs,
 
-    /// Returns a list of `cajal_cx::ReceiverReport` of each Input.
+    /// Returns a list of `cajal_cx::ReceiverInfo` of each Input.
     ReportInputs,
+
+    /// Returns the ReceiverInfo of a tract by name, if it exists.
+    InputInfo(String),
 
     /// Begin processing signals.
     Wake,
@@ -120,6 +123,7 @@ impl fmt::Display for Action {
             Self::Sleep => "Sleep",
             Self::Terminate => "Terminate",
             Self::Ignore => "Ignore",
+            Self::InputInfo(..) => "InputInfo",
             Self::LinkOutput(..) => "LinkOutput",
         };
         write!(f, "{}", as_str)
