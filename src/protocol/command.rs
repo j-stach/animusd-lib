@@ -99,7 +99,7 @@ pub enum Action {
 
     /// Connect the appropriate Output to the Input in the report.
     /// Passes the `ReceiverReport` as bytes.
-    ConnectTract(cajal_cx::tract::receiver::ReceiverInfo),
+    LinkOutput(cajal_cx::tract::receiver::ReceiverInfo),
 }
 
 use std::fmt;
@@ -120,7 +120,7 @@ impl fmt::Display for Action {
             Self::Sleep => "Sleep",
             Self::Terminate => "Terminate",
             Self::Ignore => "Ignore",
-            Self::ConnectTract(..) => "ConnectTract",
+            Self::LinkOutput(..) => "LinkOutput",
         };
         write!(f, "{}", as_str)
     }
