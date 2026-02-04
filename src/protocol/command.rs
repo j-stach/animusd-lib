@@ -103,6 +103,11 @@ pub enum Action {
     /// Connect the appropriate Output to the Input in the report.
     /// Passes the `ReceiverReport` as bytes.
     LinkOutput(cajal_cx::tract::receiver::ReceiverInfo),
+
+    /// Attempt to link an Output to an arbitrary SocketAddr.
+    /// This linkage is not checked for ReceiverInfo (unsafe), 
+    /// so only use it when you can guarantee the SocketAddr is correct.
+    UncheckedLink { tract: String, port: std::net::SocketAddr }
 }
 
 use std::fmt;
@@ -125,6 +130,7 @@ impl fmt::Display for Action {
             Self::Ignore => "Ignore",
             Self::InputInfo(..) => "InputInfo",
             Self::LinkOutput(..) => "LinkOutput",
+            Self::UncheckedLink {..} => "UncheckedLink",
         };
         write!(f, "{}", as_str)
     }
